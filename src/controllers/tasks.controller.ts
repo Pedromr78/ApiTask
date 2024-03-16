@@ -31,7 +31,7 @@ export class TasksController {
                                 message: 'Error en query',
                             })
                         } else {
-                            if (row && row.email == params.email && row.id == params.id) {
+                            if (row && row.email == params.email && row.ID == params.userID) {
                                 var user = row;
                                 db.run('INSERT INTO tasks(name, date, description, status, userID) VALUES(?, ?, ?, ?, ?)', [params.name, params.date, params.description, params.status, params.userID], (err) => {
                                     if (err) {
@@ -151,7 +151,7 @@ export class TasksController {
                                 }else{
                                     return res.status(200).send({
                                         status: 'success',
-                                        tasks: 'Tarea eliminada',
+                                        message: 'Tarea eliminada'
                                        
                                     });
                                 }
@@ -210,7 +210,7 @@ export class TasksController {
                                             }else{
                                                 return res.status(200).send({
                                                     status: 'success',
-                                                    oldtasks: oldtask,
+                                                    oldtask: oldtask,
                                                   
                                                    
                                                 });
@@ -262,7 +262,7 @@ export class TasksController {
                                 message: 'Error en query',
                             })
                         } else {
-                            if (row && row.email == params.email && row.ID == params.id) {
+                            if (row && row.email == params.email && row.ID == params.userID) {
                                 var user = row;
                                 db.all("SELECT * FROM tasks WHERE userID = ?", params.userID, (err, row: any) => {
                                     if (row) {
