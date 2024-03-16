@@ -9,13 +9,13 @@ export class TasksController {
 
     newtask(req: Request, res: Response, next: NextFunction) {
         var params = req.body;
-        var validate_email = validator.isEmail(params.email) && !validator.isEmpty(params.email);
-        var validate_user = !validator.isEmpty(params.userID);
+      
+
         var validate_name = !validator.isEmpty(params.name);
         var validate_date = !validator.isEmpty(params.date) && !validator.isDate(params.date);
         var validate_description = !validator.isEmpty(params.description);
-        if (validate_name && validate_description && validate_date && validate_user && validate_email) {
-            const db = new this.sqlite.Database('./chinook.db', this.sqlite.OPEN_READWRITE, (err) => {
+        if (validate_name && validate_description && validate_date) {
+            const db = new this.sqlite.Database('./apitask.db', this.sqlite.OPEN_READWRITE, (err) => {
                 if (err) {
                     return res.status(404).send({
                         status: 'error',
@@ -24,16 +24,16 @@ export class TasksController {
                 }
                 else {
 
-                    db.get("SELECT * FROM users WHERE email = ?", params.email, (err, row: any) => {
+                    db.get("SELECT * FROM users WHERE email = ?", params.user.email, (err, row: any) => {
                         if (err) {
                             return res.status(404).send({
                                 status: 'error',
                                 message: 'Error en query',
                             })
                         } else {
-                            if (row && row.email == params.email && row.ID == params.userID) {
-                                var user = row;
-                                db.run('INSERT INTO tasks(name, date, description, status, userID) VALUES(?, ?, ?, ?, ?)', [params.name, params.date, params.description, params.status, params.userID], (err) => {
+                            if (row && row.email == params.user.email && row.ID == params.user.sub) {
+                              
+                                db.run('INSERT INTO tasks(name, date, description, status, userID) VALUES(?, ?, ?, ?, ?)', [params.name, params.date, params.description, params.status, params.user.sub], (err) => {
                                     if (err) {
                                         return res.status(404).send({
                                             status: 'error',
@@ -71,9 +71,8 @@ export class TasksController {
     }
     getTask(req: Request, res: Response, next: NextFunction) {
         var params = req.body;
-        var validate_email = validator.isEmail(params.email) && !validator.isEmpty(params.email);
-        if (validate_email) {
-            const db = new this.sqlite.Database('./chinook.db', this.sqlite.OPEN_READWRITE, (err) => {
+        var id = req.params.id;
+            const db = new this.sqlite.Database('./apitask.db', this.sqlite.OPEN_READWRITE, (err) => {
                 if (err) {
                     return res.status(404).send({
                         status: 'error',
@@ -82,16 +81,16 @@ export class TasksController {
                 }
                 else {
 
-                    db.get("SELECT * FROM users WHERE email = ?", params.email, (err, row: any) => {
+                    db.get("SELECT * FROM users WHERE email = ?", params.user.email, (err, row: any) => {
                         if (err) {
                             return res.status(404).send({
                                 status: 'error',
                                 message: 'Error en query',
                             })
                         } else {
-                           
-                            if (row && row.email == params.email && row.ID == params.userID) {
-                                db.get("SELECT * FROM tasks WHERE id = ?", params.id, (err, row: any) => {
+                         
+                            if (row && row.email == params.user.email && row.ID == params.user.sub) {
+                                db.get("SELECT * FROM tasks WHERE id = ?", id, (err, row: any) => {  //Cambiar id
                                     if (row) {
                                         return res.status(200).send({
                                             status: 'success',
@@ -116,33 +115,28 @@ export class TasksController {
                     })
                 }
             })
-        } else {
-            return res.status(404).send({
-                status: 'error',
-                message: 'Datos incorrectos',
-            })
-        }
+        
     }
     deleteTask(req: Request, res: Response, next: NextFunction) {
         var params = req.body;
-        var validate_email = validator.isEmail(params.email) && !validator.isEmpty(params.email);
-        if (validate_email) {
-            const db = new this.sqlite.Database('./chinook.db', this.sqlite.OPEN_READWRITE, (err) => {
+        var id = req.params.id;
+   
+            const db = new this.sqlite.Database('./apitask.db', this.sqlite.OPEN_READWRITE, (err) => {
                 if (err) {
                     return res.status(404).send({
                         status: 'error',
                         message: 'Error de conexion con bd',
                     })
                 }
-                else { db.get("SELECT * FROM users WHERE email = ?", params.email, (err, row: any) => {
+                else { db.get("SELECT * FROM users WHERE email = ?", params.user.email, (err, row: any) => {
                     if (err) {
                         return res.status(404).send({
                             status: 'error',
                             message: 'Error en query',
                         })
                     } else {
-                        if (row && row.email == params.email && row.ID == params.userID) {
-                            db.run("DELETE FROM tasks WHERE ID = ?", params.id, (err:any, row: any) => {
+                        if (row && row.email == params.user.email && row.ID == params.user.sub) {
+                            db.run("DELETE FROM tasks WHERE ID = ?", id, (err:any, row: any) => {
                                 if (err) {
                                     return res.status(404).send({
                                         status: 'error',
@@ -168,19 +162,13 @@ export class TasksController {
 
                 }
             })
-        }else {
-            return res.status(404).send({
-                status: 'error',
-                message: 'Datos incorrectos',
-            })
-        }
+        
     }
     updateTask(req: Request, res: Response, next: NextFunction){
-
+        //Añadir validacion para los cambios
         var params = req.body;
-        var validate_email = validator.isEmail(params.email) && !validator.isEmpty(params.email);
-        if (validate_email) {
-            const db = new this.sqlite.Database('./chinook.db', this.sqlite.OPEN_READWRITE, (err) => {
+        var id = req.params.id;
+            const db = new this.sqlite.Database('./apitask.db', this.sqlite.OPEN_READWRITE, (err) => {
                 if (err) {
                     return res.status(404).send({
                         status: 'error',
@@ -188,19 +176,19 @@ export class TasksController {
                     })
                 }
                 else {
-                    db.get("SELECT * FROM users WHERE email = ?", params.email, (err, row: any) => {
+                    db.get("SELECT * FROM users WHERE email = ?", params.user.email, (err, row: any) => {
                         if (err) {
                             return res.status(404).send({
                                 status: 'error',
                                 message: 'Error en query',
                             })
                         } else {
-                            if (row && row.email == params.email && row.ID == params.userID) {
+                            if (row && row.email == params.user.email && row.ID == params.user.sub) {
 
-                                db.get("SELECT * FROM tasks WHERE id = ?", params.id, (err, row: any) => {
+                                db.get("SELECT * FROM tasks WHERE id = ?", id, (err, row: any) => {
                                     if (row) {
                                             var oldtask= row;
-                                        db.run("UPDATE tasks SET name = ?, date = ?, description = ?, status = ? WHERE ID = ?", [params.name, params.date, params.description, params.status, oldtask.ID], (err:any, data:any) => {
+                                        db.run("UPDATE tasks SET name = ?, date = ?, description = ?, status = ? WHERE ID = ?", [params.name, params.date, params.description, params.status, id], (err:any, data:any) => {
                                          
                                             if (err) {
                                                 return res.status(404).send({
@@ -237,16 +225,15 @@ export class TasksController {
             })
         
         
-        }
+        
 
 
     }
 
     getTasks(req: Request, res: Response, next: NextFunction) {
         var params = req.body;
-        var validate_email = validator.isEmail(params.email) && !validator.isEmpty(params.email);
-        if (validate_email) {
-            const db = new this.sqlite.Database('./chinook.db', this.sqlite.OPEN_READWRITE, (err) => {
+   
+            const db = new this.sqlite.Database('./apitask.db', this.sqlite.OPEN_READWRITE, (err) => {
                 if (err) {
                     return res.status(404).send({
                         status: 'error',
@@ -254,17 +241,16 @@ export class TasksController {
                     })
                 }
                 else {
-
-                    db.get("SELECT * FROM users WHERE email = ?", params.email, (err, row: any) => {
+                    db.get("SELECT * FROM users WHERE email = ?", params.user.email, (err, row: any) => {
                         if (err) {
                             return res.status(404).send({
                                 status: 'error',
                                 message: 'Error en query',
                             })
                         } else {
-                            if (row && row.email == params.email && row.ID == params.userID) {
-                                var user = row;
-                                db.all("SELECT * FROM tasks WHERE userID = ?", params.userID, (err, row: any) => {
+                            if (row && row.email == params.user.email && row.ID == params.user.sub) {
+                             
+                                db.all("SELECT * FROM tasks WHERE userID = ?", params.user.sub, (err, row: any) => {
                                     if (row) {
                                         return res.status(200).send({
                                             status: 'success',
@@ -289,12 +275,7 @@ export class TasksController {
                     })
                 }
             })
-        } else {
-            return res.status(404).send({
-                status: 'error',
-                message: 'Datos incorrectos',
-            })
-        }
+       
     }
 
 }

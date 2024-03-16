@@ -23,7 +23,7 @@ export class UserController{
         var validate_password = !validator.isEmpty(params.password);
         if (validate_name && validate_surname && validate_email && validate_password) {
          
-            const db = new this.sqlite.Database('./chinook.db', this.sqlite.OPEN_READWRITE, (err) => {
+            const db = new this.sqlite.Database('./apitask.db', this.sqlite.OPEN_READWRITE, (err) => {
                 if (err) {
                     return res.status(404).send({
                         status: 'error',
@@ -96,7 +96,7 @@ export class UserController{
                 message: 'No se ha validado correctamente, vuelva a intentarlo',
             })
         }
-        const db = new sqlite3.Database('./chinook.db', sqlite3.OPEN_READWRITE, (err) => {
+        const db = new sqlite3.Database('./apitask.db', sqlite3.OPEN_READWRITE, (err) => {
             if (err) {
                 return res.status(404).send({
                     status: 'error',

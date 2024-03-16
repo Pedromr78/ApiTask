@@ -7,9 +7,9 @@ var taskcomponent = new TasksController()
 // Users routes
 router.get("/", authenticated,(req:Request, res:Response, next:NextFunction) => taskcomponent.getTasks(req, res, next));
 router.post("/task", authenticated, (req:Request, res:Response, next:NextFunction) => taskcomponent.newtask(req, res, next));
-router.get("/task", authenticated,(req:Request, res:Response, next:NextFunction) => taskcomponent.getTask(req, res, next));
-router.delete("/task", authenticated,(req:Request, res:Response, next:NextFunction) => taskcomponent.deleteTask(req, res, next));
-router.put("/task", authenticated,(req:Request, res:Response, next:NextFunction) => taskcomponent.updateTask(req, res, next));
+router.get("/task/:id", authenticated,(req:Request, res:Response, next:NextFunction) => taskcomponent.getTask(req, res, next));
+router.delete("/task/:id", authenticated,(req:Request, res:Response, next:NextFunction) => taskcomponent.deleteTask(req, res, next));
+router.put("/task/:id", authenticated,(req:Request, res:Response, next:NextFunction) => taskcomponent.updateTask(req, res, next));
 // router.get('/:id', (req: Request, res: Response) => {
 //   res.send(`User ${req.params.id} route!`);
 // });

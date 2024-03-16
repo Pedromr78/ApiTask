@@ -9,7 +9,7 @@ const sqlite = sqlite3.verbose();
 
 const port = process.env.PORT || 3000;
 
-const db = new sqlite.Database('chinook.db', sqlite.OPEN_READWRITE|sqlite.OPEN_CREATE, (err) => {
+const db = new sqlite.Database('apitask.db', sqlite.OPEN_READWRITE|sqlite.OPEN_CREATE, (err) => {
     if (err) {
      console.log(err);
     }
