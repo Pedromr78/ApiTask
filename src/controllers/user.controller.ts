@@ -40,7 +40,8 @@ export class UserController{
                             })
                           }else{
                             if(row){
-                                return res.status(500).send({
+                                return res.status(404).send({
+                                     status: 'error',
                                     message: 'Este usuario ya existe',
                                 })
                             }
@@ -133,7 +134,7 @@ export class UserController{
                             if(check){
                                 if (params.gettoken) {
                                     return res.status(200).send({
-                                        
+                                        status: 'success',
                                         tocken: this.jwt.creaateTocken(user)
                                     })
                                 } else {
@@ -147,7 +148,8 @@ export class UserController{
                             }
                             else {
                                 return res.status(404).send({
-                                    message: 'Credenciales incorrectas',
+                                    status: 'error',
+                                    message: 'Credenciales incorrectas'
                                 })
                             }
                             

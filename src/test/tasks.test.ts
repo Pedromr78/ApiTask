@@ -10,7 +10,7 @@ describe('GET /tasks', () =>{
   var idtask:any;
   var tocken:any;
 
-  test('El endpoint deberia contener status 200, tipo json y el parametro tasks', async ()=>{
+  test('El endpoint deberia contener status 200, tipo json y el parametro tocken', async ()=>{
     var response = request(app).post('/users/login')
     .send({ email : "peropela333@gmail.com", password : "P@ssw0rd", gettoken : "true"})
     expect((await response).status).toBe(200);
